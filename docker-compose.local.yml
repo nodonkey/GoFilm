@@ -1,0 +1,42 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: gofilm_mysql
+    restart: unless-stopped
+    ports:
+      - "3610:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: FilmSite
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+8:00
+      - --lower-case-table-names=1
+    volumes:
+      - gofilm_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: gofilm_redis
+    restart: unless-stopped
+    ports:
+      - "3620:6379"
+    command: [ "redis-server", "--requirepass", "root" ]
+    volumes:
+      - gofilm_redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "root", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  gofilm_mysql_data:
+  gofilm_redis_data:
