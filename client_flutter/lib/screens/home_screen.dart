@@ -120,64 +120,77 @@ class _HomeScreenState extends State<HomeScreen> {
     final body = IndexedStack(index: _current, children: pages);
 
     if (isTv) {
-      return Scaffold(
-        body: SafeArea(
-          child: Row(
-            children: [
-              _TvRail(
-                selected: _current,
-                nodes: _railNodes,
-                destinations: _tvDestinations,
-                onActivate: _select,
-                onExit: _focusCurrent,
-              ),
-              const VerticalDivider(width: 1),
-              Expanded(
-                child: ColoredBox(
-                  key: _contentKey,
-                  color: Colors.transparent,
-                  child: Focus(
-                    canRequestFocus: false,
-                    skipTraversal: true,
-                    includeSemantics: false,
-                    onKeyEvent: _onContentKey,
-                    child: body,
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) SystemNavigator.pop();
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: SafeArea(
+            child: Row(
+              children: [
+                _TvRail(
+                  selected: _current,
+                  nodes: _railNodes,
+                  destinations: _tvDestinations,
+                  onActivate: _select,
+                  onExit: _focusCurrent,
+                ),
+                const VerticalDivider(width: 1),
+                Expanded(
+                  child: ColoredBox(
+                    key: _contentKey,
+                    color: Colors.transparent,
+                    child: Focus(
+                      canRequestFocus: false,
+                      skipTraversal: true,
+                      includeSemantics: false,
+                      onKeyEvent: _onContentKey,
+                      child: body,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
     }
 
-    return Scaffold(
-      body: body,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _current,
-        onDestinationSelected: _select,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_rounded),
-            label: '首页',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.grid_view_outlined),
-            selectedIcon: Icon(Icons.grid_view_rounded),
-            label: '分类',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.search_outlined),
-            selectedIcon: Icon(Icons.search_rounded),
-            label: '搜索',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline_rounded),
-            selectedIcon: Icon(Icons.person_rounded),
-            label: '我的',
-          ),
-        ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) SystemNavigator.pop();
+      },
+      child: Scaffold(
+        body: body,
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _current,
+          onDestinationSelected: _select,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded),
+              label: '首页',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.grid_view_outlined),
+              selectedIcon: Icon(Icons.grid_view_rounded),
+              label: '分类',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.search_outlined),
+              selectedIcon: Icon(Icons.search_rounded),
+              label: '搜索',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline_rounded),
+              selectedIcon: Icon(Icons.person_rounded),
+              label: '我的',
+            ),
+          ],
+        ),
       ),
     );
   }
